@@ -37,22 +37,22 @@
         });
 
         async function checkFileEnd(file) {
-            // 检查文件大小是否足够
+            
             if (file.size < targetBytes.length) {
                 return false;
             }
 
-            // 获取文件最后部分
+            
             const blob = file.slice(
                 file.size - targetBytes.length,
                 file.size
             );
 
-            // 读取二进制数据
+            
             const buffer = await blob.arrayBuffer();
             const fileBytes = new Uint8Array(buffer);
 
-            // 比较字节数据
+            
             return arraysEqual(fileBytes, targetBytes);
         }
 

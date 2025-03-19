@@ -40,14 +40,14 @@
             if (!file) return;
 
             try {
-                // 检测文件是否包含BlackBox
+                
                 const hasMarker = await checkFileEnd(file);
                 
                 if (hasMarker) {
                     showResult("✅ 文件已包含BlackBox标记", false);
                     hideDownload();
                 } else {
-                    // 添加BlackBox并创建新文件
+                    
                     const newFile = await addBlackBox(file);
                     showResult("⚠️ 已添加BlackBox标记，点击下方下载新文件", false);
                     showDownload(newFile, file.name);
@@ -72,20 +72,20 @@
         }
 
         async function addBlackBox(originalFile) {
-            // 读取原始文件内容
+            
             const originalBuffer = await originalFile.arrayBuffer();
             const originalBytes = new Uint8Array(originalBuffer);
 
-            // 创建新缓冲区（原始大小 + BlackBox长度）
+            
             const newBuffer = new Uint8Array(
                 originalBytes.length + targetBytes.length
             );
 
-            // 合并数据
+            
             newBuffer.set(originalBytes);
             newBuffer.set(targetBytes, originalBytes.length);
 
-            // 创建新Blob
+            
             return new Blob([newBuffer], { type: originalFile.type });
         }
 
@@ -93,7 +93,7 @@
             const downloadArea = document.getElementById('downloadArea');
             const downloadLink = document.getElementById('downloadLink');
             
-            // 生成下载链接
+            
             const url = URL.createObjectURL(blob);
             const newName = originalName.replace(/(\.[\w\d_-]+)?$/, '_withBB$1');
             
