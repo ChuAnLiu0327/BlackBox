@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BlackBox检测器</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 600px; }
+        #result { margin-top: 10px; padding: 10px; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>BlackBox检测器(检测是否被BlackBox加密过)</h2>
+        <input type="file" id="fileInput">
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const targetString = "BlackBox";
+        const encoder = new TextEncoder();
+        const targetBytes = encoder.encode(targetString);
+
+        document.getElementById('fileInput').addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            try {
+                const result = await checkFileEnd(file);
+                showResult(result ? 
+                    "✅ 文件末尾发现BlackBox标记" : 
+                    "❌ 文件末尾未找到BlackBox标记");
+            } catch (err) {
+                showResult("⚠️ 发生错误: " + err.message, true);
+            }
+        });
+
+        async function checkFileEnd(file) {
+            // 检查文件大小是否足够
+            if (file.size < targetBytes.length) {
+                return false;
+            }
+
+            // 获取文件最后部分
+            const blob = file.slice(
+                file.size - targetBytes.length,
+                file.size
+            );
+
+            // 读取二进制数据
+            const buffer = await blob.arrayBuffer();
+            const fileBytes = new Uint8Array(buffer);
+
+            // 比较字节数据
+            return arraysEqual(fileBytes, targetBytes);
+        }
+
+        function arraysEqual(a, b) {
+            if (a.length !== b.length) return false;
+            for (let i = 0; i < a.length; i++) {
+                if (a[i] !== b[i]) return false;
+            }
+            return true;
+        }
+
+        function showResult(message, isError = false) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = isError ? 'error' : 'success';
+            resultDiv.textContent = message;
+        }
+    </script>
+</body>
+</html>
